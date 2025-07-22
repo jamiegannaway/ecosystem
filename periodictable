@@ -6,62 +6,94 @@
     <title>Enterprise Software Periodic Table</title>
 <style>
 :root {
-    --panel-width: 420px;
+    --panel-width: 400px;
     --border-radius: 0.5rem;
-    --card-size: 85px; /* Reduced card size */
+    --card-size: 72px; /* Reduced for better fit */
+    --grid-gap: 4px;
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background-color: #F9FAFB;
+    background-color: #f4f5f7;
     margin: 0;
-    color: #374151;
-    overflow-x: hidden; /* Prevent horizontal scroll on the body */
+    color: #172b4d;
+    overflow-x: hidden;
 }
 
 .page-wrapper { display: flex; }
 .main-content { flex-grow: 1; padding: 1.5rem; min-width: 0; }
 
 h1, h2 {
-    font-weight: 300; padding: 1rem; background-color: white;
+    font-weight: 400; padding: 1rem; background-color: white;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     border-radius: var(--border-radius); margin-bottom: 1rem;
+    color: #091e42;
 }
-h1 { font-size: 1.875rem; }
+h1 { font-size: 1.75rem; }
 h2 { font-size: 1.5rem; margin-top: 2rem; }
 
-.triage-controls {
-    background-color: white; padding: 1rem; border-radius: var(--border-radius);
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); margin-bottom: 1rem;
+/* New Legend/Controls Design */
+.legend-controls {
+    background-color: white; padding: 1.5rem; border-radius: var(--border-radius);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); margin-bottom: 1.5rem;
 }
-.triage-controls label {
-    display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;
+.legend-list {
+    display: flex;
+    flex-flow: column wrap;
+    gap: 0 2rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    max-height: 160px; /* 4 rows at 40px each */
 }
-.filter-buttons {
-    display: flex; flex-flow: column wrap; gap: 0.5rem;
-    max-height: 200px; /* Controls multi-column layout */
+.legend-item {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    cursor: pointer;
+    border-radius: 4px;
 }
-.filter-button-group {
-    display: flex; align-items: center; border: 1px solid #D1D5DB;
-    border-radius: 9999px; overflow: hidden; transition: all 0.2s;
+.legend-item:hover .legend-name {
+    color: #0052cc;
 }
-.filter-button-group:hover { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); }
-.filter-button-group .market-name, .filter-button-group .market-plus {
-    padding: 0.5rem 1rem; font-size: 0.875rem; background-color: white;
-    cursor: pointer; border: none;
+.legend-item.active .legend-name {
+    font-weight: 600;
+    color: #0052cc;
 }
-.filter-button-group .market-name { border-right: 1px solid #D1D5DB; }
-.filter-button-group.active .market-name {
-    color: white; font-weight: 500; background-color: #4338CA;
+.legend-color-box {
+    width: 14px;
+    height: 14px;
+    margin-right: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
 }
-.filter-button-group .market-plus:hover { background-color: #f0f0f0; }
+.legend-name {
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+.legend-plus-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #7a869a;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+.legend-plus-btn:hover { background-color: #f4f5f7; color: #091e42; }
 
 .triage-grid-wrapper { overflow-x: auto; padding-bottom: 1rem; }
-.triage-grid { display: grid; gap: 0.35rem; padding: 0.5rem; }
+.triage-grid { display: grid; gap: var(--grid-gap); padding: 0.5rem; }
 .main-grid {
-    grid-template-columns: repeat(14, var(--card-size));
-    grid-template-rows: repeat(5, var(--card-size));
-    min-width: calc(14 * var(--card-size) + 13 * 0.35rem);
+    grid-template-columns: repeat(18, var(--card-size));
+    grid-template-rows: repeat(7, var(--card-size));
+    min-width: calc(18 * var(--card-size) + 17 * var(--grid-gap));
 }
 .heavy-elements-grid {
     grid-template-columns: repeat(8, var(--card-size));
@@ -70,19 +102,22 @@ h2 { font-size: 1.5rem; margin-top: 2rem; }
 }
 
 .element-card {
-    border: 2px solid; border-radius: var(--border-radius); padding: 0.5rem;
+    border: 1px solid;
+    border-radius: 4px; padding: 0.4rem;
     transition: all 0.2s ease-in-out; cursor: pointer; text-align: left;
     display: flex; flex-direction: column; justify-content: center;
     width: var(--card-size); height: var(--card-size); box-sizing: border-box; overflow: hidden;
 }
 .element-card:hover { transform: scale(1.1); z-index: 10; }
 .element-card.selected {
-    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.4); transform: scale(1.1); z-index: 11;
+    box-shadow: 0 0 0 3px rgba(76, 154, 255, 0.7);
+    transform: scale(1.1);
+    z-index: 11;
 }
 .element-card.filtered-out { opacity: 0.15; filter: grayscale(1); }
 .element-card:hover.filtered-out { opacity: 1; filter: grayscale(0); }
-.element-card .symbol { font-size: 1.4rem; font-weight: 700; }
-.element-card .name { font-size: 0.65rem; line-height: 1.2; margin-top: 0.25rem; }
+.element-card .symbol { font-size: 1.3rem; font-weight: 600; }
+.element-card .name { font-size: 0.6rem; line-height: 1.2; margin-top: 0.2rem; }
 
 #information-panel {
     width: var(--panel-width); flex-shrink: 0; height: 100vh;
@@ -91,21 +126,21 @@ h2 { font-size: 1.5rem; margin-top: 2rem; }
 }
 .info-content { padding: 2.5rem; }
 .info-content h2 { font-size: 1.875rem; font-weight: 300; margin: 0; padding: 0; box-shadow: none; background: none; }
-.info-content h3 { font-size: 1.1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid #E5E7EB; padding-bottom: 0.25rem; }
-.info-content p { margin: 0 0 1rem 0; line-height: 1.6; color: #4B5563; }
-.info-content a { color: #3B82F6; text-decoration: none; }
+.info-content h3 { font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid #dfe1e6; padding-bottom: 0.25rem; }
+.info-content p { margin: 0 0 1rem 0; line-height: 1.6; color: #42526e; }
+.info-content a { color: #0052cc; text-decoration: none; }
 .info-content a:hover { text-decoration: underline; }
-.info-placeholder { padding: 2.5rem; color: #9CA3AF; text-align: center; }
+.info-placeholder { padding: 2.5rem; color: #7a869a; text-align: center; }
 
 .modal-backdrop {
-    position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.6);
+    position: fixed; inset: 0; background-color: rgba(9, 30, 66, 0.54);
     display: flex; align-items: center; justify-content: center;
-    padding: 1rem; z-index: 50; opacity: 0; visibility: hidden;
+    padding: 1rem; z-index: 100; opacity: 0; visibility: hidden;
     transition: opacity 0.3s, visibility 0.3s;
 }
 .modal-backdrop.visible { opacity: 1; visibility: visible; }
 .modal-content {
-    position: relative; max-width: 50rem; width: 100%; max-height: 90vh;
+    position: relative; max-width: 52rem; width: 100%; max-height: 90vh;
     overflow-y: auto; background-color: white; border-radius: var(--border-radius);
     box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
     padding: 2.5rem; transform: scale(0.95); transition: transform 0.3s;
@@ -115,63 +150,39 @@ h2 { font-size: 1.5rem; margin-top: 2rem; }
     position: absolute; top: 0.75rem; right: 0.75rem; padding: 0.5rem;
     border-radius: 9999px; border: none; background: none; cursor: pointer; line-height: 1;
 }
-.modal-close-btn:hover { background-color: #F3F4F6; }
+.modal-close-btn:hover { background-color: #f4f5f7; }
 .modal-header h2 { font-size: 1.875rem; font-weight: 300; margin: 0 0 1rem 0; }
 .info-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem; padding: 1rem; background-color: #F9FAFB;
+    gap: 1rem; padding: 1rem; background-color: #f4f5f7;
     border-radius: var(--border-radius); margin-top: 1rem;
 }
 .info-grid div { font-size: 0.9rem; }
-.info-grid span { font-weight: 600; display: block; color: #111827; }
+.info-grid span { font-weight: 600; display: block; color: #172b4d; }
 
 .citation-link {
-    font-size: 0.7em;
-    vertical-align: super;
-    background-color: #eef2ff;
-    color: #4f46e5;
-    padding: 2px 4px;
-    border-radius: 4px;
-    cursor: pointer;
-    text-decoration: none;
+    font-size: 0.7em; vertical-align: super; background-color: #deebff;
+    color: #0052cc; padding: 2px 4px; border-radius: 4px;
+    cursor: pointer; text-decoration: none;
 }
-.citation-link:hover { background-color: #c7d2fe; }
+.citation-link:hover { background-color: #cce0ff; }
 
 #references-badge {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    background-color: #fff;
-    color: #4B5563;
-    padding: 0.75rem 1.25rem;
-    border-radius: 9999px;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    z-index: 45;
-    transition: transform 0.2s;
+    position: fixed; bottom: 1.5rem; right: calc(var(--panel-width) + 1.5rem);
+    background-color: #fff; color: #42526e; padding: 0.75rem 1.25rem;
+    border-radius: 9999px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    cursor: pointer; font-size: 0.9rem; font-weight: 500;
+    display: flex; align-items: center; gap: 0.5rem; z-index: 45; transition: all 0.2s;
 }
 #references-badge:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
 }
 #references-list {
-    list-style-type: none;
-    padding-left: 0;
-    font-size: 0.9rem;
-    line-height: 1.6;
+    list-style-type: none; padding-left: 0; font-size: 0.9rem; line-height: 1.6;
 }
-#references-list li {
-    padding: 0.5rem;
-    border-bottom: 1px solid #eee;
-}
-#references-list li:target {
-    background-color: #fefcbf; /* Highlight for scrolled-to reference */
-}
+#references-list li { padding: 0.5rem; border-bottom: 1px solid #eee; }
+#references-list li:target { background-color: #fffbdd; }
 
 </style>
 </head>
@@ -181,7 +192,7 @@ h2 { font-size: 1.5rem; margin-top: 2rem; }
     <div class="main-content">
         <div id="triage-table-root">
             <h1>Enterprise Software Periodic Table</h1>
-            <div id="controls-container" class="triage-controls"></div>
+            <div id="legend-container" class="legend-controls"></div>
             <div class="triage-grid-wrapper">
                 <div id="main-grid" class="triage-grid main-grid"></div>
             </div>
@@ -305,8 +316,6 @@ h2 { font-size: 1.5rem; margin-top: 2rem; }
         { id: 97, symbol: 'Mt', name: 'Malt', marketCategory: 'FMS', website: 'malt.com', size: '800,000+ Freelancers', description: 'A leading European freelance marketplace that also offers an enterprise solution (Malt Community) that functions as an FMS.', differentiator: 'European Market Leadership: Its key differentiator is its strong foothold and leadership position in the European freelance market.' },
         { id: 98, symbol: 'Tt', name: 'Toptal', marketCategory: 'FMS', website: 'toptal.com', size: '1,001-5,000 Emp', description: 'An exclusive network of the top freelance software developers, designers, finance experts, product managers, and project managers.', differentiator: 'Elite, Vetted Talent Network: Differentiates by being an exclusive, highly-vetted network, focusing on providing access to the "top 3%" of freelance talent.' },
         { id: 99, symbol: 'Ct', name: 'Catalant', marketCategory: 'FMS', website: 'gocatalant.com', size: '201-500 Emp', description: 'Provides a platform and services that connect companies with a network of over 70,000 independent consultants and experts.', differentiator: 'Focus on High-End Consulting and Expert Talent: Differentiates by focusing on high-end, strategic project work.' },
-
-        // Heavy Elements
         { id: 101, symbol: "Ict", name: "Icertis", marketCategory: "CLM", website: "icertis.com", size: ">$250M ARR", description: "Icertis is a global leader in AI-powered contract intelligence, providing a platform that digitizes and structures contracts at scale.", differentiator: "AI-Powered Contract Intelligence: Positions itself as a pioneer in AI, transforming contracts from static documents into strategic assets." },
         { id: 102, symbol: "SAP", name: "SAP S/4HANA", marketCategory: "ERP", website: "sap.com", size: "$362.3B Market Cap", description: "SAP S/4HANA is a future-ready enterprise resource planning (ERP) system with built-in intelligent technologies, including AI and machine learning.", differentiator: "In-Memory Database and Simplified Data Model: Runs exclusively on the SAP HANA in-memory database, enabling real-time data processing." },
         { id: 103, symbol: "Cp", name: "Coupa", marketCategory: "S2P", website: "coupa.com", size: "$725M Revenue", description: "Coupa provides a cloud-based Business Spend Management (BSM) platform that offers a comprehensive suite of applications.", differentiator: "Unified BSM Platform and Community Intelligence: Differentiates with its user-centric, unified platform covering all aspects of spend." },
@@ -317,96 +326,69 @@ h2 { font-size: 1.5rem; margin-top: 2rem; }
         { id: 108, symbol: "CPr", name: "Coupa Procurement", marketCategory: "PO", website: "coupa.com", size: "Part of Coupa", description: "Coupa Procurement is part of Coupa's Business Spend Management platform, helping businesses control spending and purchasing.", differentiator: "User-Centric Experience and Unified Spend Management: Differentiates with its intuitive, 'consumerized' shopping experience." },
         { id: 109, symbol: "Opn", name: "OpenAI", marketCategory: "AIW", website: "openai.com", size: "$3.7B Est. Revenue", description: "OpenAI is an AI research and deployment company. Its GPT models are foundational technologies for many AI writing applications.", differentiator: "Foundational AI Research and Model Performance: Its primary differentiator is the state-of-the-art performance and versatility of its underlying models." },
         { id: 110, symbol: "Kv", name: "Keelvar", marketCategory: "AS", website: "keelvar.com", size: "$42.92M Funding", description: "Keelvar provides an AI-driven sourcing automation and optimization platform that uses sourcing bots to autonomously run sourcing events.", differentiator: "Sourcing Bots and Optimization: A pioneer in the space, its key differentiator is the use of intelligent sourcing bots." },
-        { id: 111, symbol: "SAb", name: "SAP Ariba Sourcing", marketCategory: "BID", website: "sap.com", size: "Part of SAP", description: "A widely used e-sourcing solution for managing RFPs, RFQs, and e-auctions, integrated with the SAP Business Network.", differentiator: "Integration with SAP Business Network: Its primary differentiator is its deep integration with the world's largest B2B network." },
+        { id: 111, symbol: "SAb", name: "SAP Ariba", marketCategory: "BID", website: "sap.com", size: "Part of SAP", description: "A widely used e-sourcing solution for managing RFPs, RFQs, and e-auctions, integrated with the SAP Business Network.", differentiator: "Integration with SAP Business Network: Its primary differentiator is its deep integration with the world's largest B2B network." },
         { id: 112, symbol: "Av", name: "Aravo", marketCategory: "SRM", website: "aravo.com", size: "105 Employees", description: "Aravo provides a leading third-party risk management solution that helps organizations assess and monitor supplier compliance.", differentiator: "Deep Third-Party Risk Management Focus: Differentiates with its deep, purpose-built functionality for the entire third-party risk management lifecycle." },
         { id: 113, symbol: "Rfp", name: "RFPIO", marketCategory: "RFPW", website: "rfpio.com", size: "501-1,000 Emp", description: "A leading response management platform that helps sales, marketing, and proposal teams collaborate on and respond to RFPs.", differentiator: "AI-Powered Response Engine and Integrations: Differentiates with its AI-powered recommendation engine (RFPIO LookUp)." },
         { id: 114, symbol: "Sf", name: "Salesforce CPQ", marketCategory: "CPQ", website: "salesforce.com", size: "Part of Salesforce", description: "A cloud-based configure, price, quote solution native to the Salesforce platform, enabling sales teams to create accurate quotes.", differentiator: "Native Salesforce Integration: Its primary differentiator is being a native Salesforce application, offering seamless integration with Sales Cloud." },
         { id: 115, symbol: "SC", name: "SAP Concur", marketCategory: "EXP", website: "concur.com", size: "Part of SAP", description: "The market-leading provider of integrated travel, expense, and invoice management solutions.", differentiator: "Market Leadership and End-to-End T&E: Differentiates as the long-standing market leader with a comprehensive, end-to-end platform." },
-        { id: 116, symbol: "Up", name: "Upwork Enterprise", marketCategory: "FMS", website: "upwork.com", size: "$689.1M Revenue", description: "The enterprise offering from the world's largest work marketplace, providing a freelancer management system.", differentiator: "Access to the World's Largest Talent Marketplace: Its primary differentiator is its direct, integrated access to Upwork's vast global marketplace." },
+        { id: 116, symbol: "Up", name: "Upwork", marketCategory: "FMS", website: "upwork.com", size: "$689.1M Revenue", description: "The enterprise offering from the world's largest work marketplace, providing a freelancer management system.", differentiator: "Access to the World's Largest Talent Marketplace: Its primary differentiator is its direct, integrated access to Upwork's vast global marketplace." }
     ];
 
     const marketCategories = {
-        "CLM":  { name: "Contract Management (CLM)", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global Contract Lifecycle Management (CLM) software market is a robust and consistently growing segment of enterprise technology. Recent market analysis places its value at approximately $2.83 billion in 2024.<sup class="citation-link" data-ref="12">12</sup> Other credible estimates range from $1.1 billion to $1.26 billion for the same year, with variations likely attributable to the inclusion of associated implementation and managed services versus a focus solely on software licensing and subscription revenue.<sup class="citation-link" data-ref="18">18</sup></p><p>The forecast for the CLM market remains strong, with projections indicating it will more than double to $5.65 billion by 2030.<sup class="citation-link" data-ref="12">12</sup> This growth trajectory is supported by a consensus CAGR in the 12% to 13% range.<sup class="citation-link" data-ref="12">12</sup> Certain analyses project an even more aggressive growth rate approaching 17%, underscoring the high demand for these solutions.<sup class="citation-link" data-ref="18">18</sup> This sustained, double-digit growth is fueled by the enterprise-wide push for digital transformation within legal, procurement, and sales departments, coupled with an increasing focus on mitigating contractual risk and ensuring regulatory compliance.</p><h3>Expanded Competitive Landscape</h3><p>The CLM market features a mix of established leaders, well-funded challengers, and innovative niche players. The competitive environment is characterized by a push toward AI-driven contract intelligence and deep integration with core enterprise systems like ERP and CRM. The competitive landscape is evolving along two distinct strategic paths. One path is led by comprehensive, AI-driven “Contract Intelligence” platforms that target large, global enterprises with complex needs. These vendors, such as Icertis and Sirion, emphasize their ability to transform static legal documents into structured, queryable data that can be used to drive strategic business outcomes like revenue assurance and risk mitigation. Their platforms are built for enterprise-wide deployment and feature deep integrations with systems like SAP and Salesforce.</p><p>The second path consists of more accessible, workflow-centric solutions that often target the mid-market or specific departmental use cases, particularly sales. Players like PandaDoc and Outlaw focus on ease of use, rapid time-to-value, and seamless integration with CRM systems to accelerate the quote-to-cash cycle.<sup class="citation-link" data-ref="20">20</sup> Their go-to-market strategies frequently involve more transparent pricing and sometimes a freemium model to drive adoption. This bifurcation reflects a maturing market where a one-size-fits-all approach is becoming less viable.</p>`, color: { bg: '#EBF5FF', border: '#90CDF4' } },
-        "ERP":  { name: "Enterprise Resource (ERP)",   fullDescription: `<h3>Market Sizing and Projections</h3><p>The global Enterprise Resource Planning (ERP) software market represents one of the largest and most mature segments in enterprise technology. Market valuations for 2024 range from $64.83 billion to $81.15 billion.<sup class="citation-link" data-ref="14">14</sup> This variance is likely due to differing methodologies, with higher-end estimates often including revenue from cloud infrastructure, implementation services, and managed services, while lower-end figures may focus more narrowly on software licensing and subscriptions.</p><p>Despite its maturity, the ERP market is projected to continue its strong growth trajectory. Forecasts for the early 2030s predict the market will reach between $123.41 billion and $229.79 billion.<sup class="citation-link" data-ref="14">14</sup> This expansion is supported by a robust CAGR ranging from 10.67% to 14.4%.<sup class="citation-link" data-ref="13">13</sup> The primary catalyst for this sustained growth is the widespread, ongoing migration of organizations from legacy on-premise ERP systems to modern, cloud-based SaaS suites, a fundamental shift that continues to unlock significant budget and drive new implementations.<sup class="citation-link" data-ref="1">1</sup></p><h3>Expanded Competitive Landscape</h3><p>The ERP market is dominated by a handful of large, established vendors but also includes a vibrant ecosystem of specialized providers targeting specific industries or company sizes. A significant shift has occurred where the primary battleground is now the intelligence layer and the extensibility of the platform. Leading vendors like SAP and Oracle are aggressively marketing their AI capabilities and the power of their underlying in-memory databases (SAP HANA, Oracle Autonomous Database) to deliver real-time analytics and intelligent automation.<sup class="citation-link" data-ref="59">59</sup> This transforms the ERP from a passive system of record into an active, intelligent enterprise operating system.</p>`, color: { bg: '#E6FFFA', border: '#81E6D9' } },
-        "S2P":  { name: "Source-to-Pay (S2P)",       fullDescription: `<h3>Market Sizing and Projections</h3><p>The global Source-to-Pay (S2P) software market was valued at approximately $8.03 billion in 2024.<sup class="citation-link" data-ref="87">87</sup> This valuation is part of a larger market for S2P outsourcing services, which is valued even higher, but the software component itself represents a substantial investment area for enterprises seeking to digitize their procurement functions.<sup class="citation-link" data-ref="88">88</sup></p><p>The market is projected to more than double in the coming years, with forecasts expecting it to reach $18.28 billion by 2032.<sup class="citation-link" data-ref="87">87</sup> This growth is supported by a strong and steady CAGR of approximately 10.8%.<sup class="citation-link" data-ref="87">87</sup> The primary drivers for this expansion include the persistent need for cost reduction, the demand for greater visibility and control over enterprise spend, and the efficiency gains realized through the automation of procurement workflows. The adoption of cloud-based S2P suites by both large enterprises and increasingly by small and medium-sized enterprises (SMEs) is a key factor fueling this consistent market growth.<sup class="citation-link" data-ref="87">87</sup></p><h3>Expanded Competitive Landscape</h3><p>A central theme in the competitive environment is the concept of a unified platform. Vendors like Coupa, SAP Ariba, and GEP emphasize the value of having a single, integrated suite to manage all aspects of business spend. This approach provides a “single source of truth” for procurement data, which is critical for effective spend analysis, supplier management, and process automation.</p><p>Another key competitive vector is the application of AI and machine learning. Leading platforms are no longer just automating workflows; they are embedding intelligence to provide prescriptive recommendations, detect fraudulent spend, and benchmark performance against community data.<sup class="citation-link" data-ref="90">90</sup> Coupa’s “Community Intelligence,” which leverages anonymized spend data from its vast customer base, is a prime example of using data as a network-effect moat.<sup class="citation-link" data-ref="91">91</sup></p>`, color: { bg: '#F0FFF4', border: '#9AE6B4' } },
-        "ORCH": { name: "Procurement Orchestration",   fullDescription: `<h3>Market Sizing and Projections</h3><p>Procurement Orchestration is an emerging and rapidly growing software category. As a nascent segment, dedicated market size reports are still developing. However, the global Process Orchestration market, which provides the technological foundation for this category, was valued at $7.32 billion in 2024 and is projected to expand at a significant CAGR of 21.1% through 2030. This high growth rate is mirrored in forecasts specifically for Procurement Orchestration, which project a CAGR of 21.4% between 2024 and 2029.</p><p>Based on the high growth within the parent market and the strong demand signals from enterprise adopters, a synthesized estimate places the current global Procurement Orchestration software market in the range of $300 million to $500 million for 2024. This represents a dynamic and strategically important niche poised for exponential growth.</p><h3>Expanded Competitive Landscape</h3><p>The Procurement Orchestration market is currently led by a group of venture-backed innovators who pioneered the category. These platforms are designed to function as an intelligent “front door” or workflow layer that sits on top of an organization’s existing ERP and procurement systems. The emergence of this market is a direct consequence of the widespread adoption of best-of-breed SaaS tools over the past decade. While specialized applications delivered functional depth, they also created a fragmented user experience and siloed data. This “integration debt” created a new, pressing pain point for enterprises.</p><p>Vendors like Zip and ORO Labs position their solutions as an intelligent orchestration layer that provides a single, intuitive interface for employees to initiate any purchase request, while the platform handles the complex routing, approvals, and system handoffs in the background.<sup class="citation-link" data-ref="115">115</sup></p>`, color: { bg: '#FFF5F5', border: '#FC8181' } },
-        "HRIS": { name: "HRIS & Workforce Mgmt",       fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Human Capital Management (HCM) software, which encompasses Human Resource Information Systems (HRIS) and Workforce Management (WFM) platforms, is a large and steadily growing sector. In 2024, the market was valued at approximately $17.79 billion for Workforce Management software alone.<sup class="citation-link" data-ref="137">137</sup> The broader HCM market, including core HRIS, payroll, and talent management, is significantly larger, with estimates placing it in the range of $34 billion to $43 billion in the mid-2020s.</p><p>The Workforce Management segment is forecast to reach $85.78 billion by 2033, exhibiting a high CAGR of 19.1%.<sup class="citation-link" data-ref="137">137</sup> The overall HCM market is expected to grow at a robust, albeit more moderate, CAGR of approximately 8% to 10%, potentially reaching over $65 billion within the next decade. This growth is fueled by organizations replacing legacy systems, the demand for mobile-first workforce tools, and the integration of AI for tasks like predictive scheduling and attrition analysis.</p><h3>Expanded Competitive Landscape</h3><p>The HRIS and Workforce Management market is composed of large, cloud-native HCM suite providers, traditional ERP vendors with comprehensive HR modules, and specialized players focusing on specific areas. The competitive landscape is defined by the concept of the “all-in-one” platform. Vendors like Workday have set the standard for a seamless user experience and a single source of truth for employee data. This approach contrasts with that of legacy ERP providers like SAP and Oracle, who have transitioned their extensive on-premise HR functionalities to the cloud.<sup class="citation-link" data-ref="138">138</sup></p>`, color: { bg: '#FAF5FF', border: '#D6BCFA' } },
-        "VMS":  { name: "Vendor Management (VMS)",   fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Vendor Management Systems (VMS), specifically those focused on managing contingent workforce and staffing suppliers, is a well-established and growing segment. In 2024, the market was valued at approximately $8.02 billion.<sup class="citation-link" data-ref="158">158</sup> This valuation reflects the increasing reliance of enterprises on flexible, non-employee talent.</p><p>The market is expected to see continued strong growth, with projections indicating it will reach $20.41 billion by 2033, expanding at a healthy CAGR of 10.9%.<sup class="citation-link" data-ref="158">158</sup> This growth is driven by several factors, including the rise of the gig economy, the strategic importance of managing external labor spend, and the need for robust compliance and risk mitigation when engaging non-employee workers.</p><h3>Expanded Competitive Landscape</h3><p>A key competitive differentiator is the breadth and depth of the platform’s capabilities to manage the entire lifecycle of the extended workforce. Leading vendors like SAP Fieldglass and Beeline offer comprehensive, end-to-end solutions that automate everything from requisition and sourcing to onboarding, time and expense tracking, invoicing, and offboarding.<sup class="citation-link" data-ref="159">159</sup> Another important trend is the integration of VMS with broader HCM and procurement ecosystems. Vendors like Workday and Coupa are integrating VMS capabilities directly into their HCM and Business Spend Management suites, respectively.<sup class="citation-link" data-ref="161">161</sup></p>`, color: { bg: '#F0F9FF', border: '#A3BFFA' } },
-        "SIG":  { name: "Signature Management",      fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Signature Management Platforms, predominantly comprising e-signature solutions, has experienced explosive growth, significantly accelerated by the global shift to remote work. In 2024, the market is valued between $5.2 billion and $9.8 billion, with the range reflecting variations in scope, such as the inclusion of broader digital transaction management and identity verification services.</p><p>The forecast for this market remains exceptionally strong, with a projected CAGR in the 25% to 40% range. This high growth rate is expected to propel the market to a valuation of over $38 billion by 2030. Continued growth will be fueled by deeper integration into core business workflows, expansion into international markets, and the addition of more advanced features like AI-powered agreement analysis.</p><h3>Expanded Competitive Landscape</h3><p>The primary competitive dynamic in this space is the evolution from a point solution for signatures to a comprehensive platform for managing the entire agreement lifecycle. DocuSign, the undisputed market leader with a 61% market share, has been actively pursuing this strategy by expanding its offerings to include CLM and other agreement automation tools.<sup class="citation-link" data-ref="26">26</sup> Competition also comes from large, established software vendors who have integrated e-signature capabilities into their existing ecosystems. Adobe Sign is a formidable competitor, leveraging its deep integration with the ubiquitous Adobe Acrobat and Document Cloud.</p>`, color: { bg: '#FEFBF6', border: '#FEEBC8' } },
-        "PO":   { name: "Purchase Order Platforms",    fullDescription: `<h3>Market Sizing and Projections</h3><p>The market for Purchase Order (PO) Platforms, often categorized under the broader umbrella of procurement software, is a substantial and consistently growing segment. The global procurement software market, which includes PO management functionalities, was valued at $8.03 billion in 2024.<sup class="citation-link" data-ref="87">87</sup> A more specific analysis focusing on Purchase Order Software places the 2024 market value at $7.61 billion.<sup class="citation-link" data-ref="192">192</sup></p><p>The market is projected to experience strong and steady growth. Forecasts indicate the broader procurement software market will reach $18.28 billion by 2032, growing at a CAGR of 10.8%.<sup class="citation-link" data-ref="87">87</sup> The more focused PO software segment is expected to grow even faster, with a projected CAGR of 15%, reaching $17.6 billion by 2031.<sup class="citation-link" data-ref="192">192</sup> This growth is driven by the increasing need for businesses, particularly SMEs, to automate and streamline their purchasing processes.</p><h3>Expanded Competitive Landscape</h3><p>The Purchase Order Platforms market exists in a dynamic relationship with larger ERP and S2P suites. A distinct market for standalone PO software thrives by catering to organizations that find full suites too complex or expensive. Companies like Precoro and Procurify have built successful businesses by offering user-friendly, intuitive platforms that solve the core challenges of purchase requisition, approval workflows, and PO management. Their key differentiators are ease of use, rapid deployment, and seamless integrations with popular accounting software like QuickBooks and Xero.</p>`, color: { bg: '#FFF5F7', border: '#FED7E2' } },
-        "AIW":  { name: "AI Writing Platforms",        fullDescription: `<h3>Market Sizing and Projections</h3><p>The market for AI Writing Platforms has experienced explosive growth, catalyzed by recent advancements in large language models (LLMs) and generative AI. In 2024, the market size is estimated to be between $421.41 million and $65.12 billion.<sup class="citation-link" data-ref="16">16</sup> This extremely wide range highlights the significant variance in market definitions; the lower end likely represents the core “AI writing assistant software” market, while the higher end may encompass the broader generative AI platform market.</p><p>The growth forecast for this segment is exceptionally high. Projections show the market expanding at a CAGR ranging from 17.3% to 36.65% over the coming decade.<sup class="citation-link" data-ref="17">17</sup> This rapid expansion is driven by the widespread adoption of AI writing tools across marketing, sales, and content creation teams to boost productivity.</p><h3>Expanded Competitive Landscape</h3><p>At the foundational level, companies like OpenAI with its GPT models are not just direct-to-consumer products but also the engine powering a vast ecosystem of other AI writing applications. The next layer consists of specialized applications built on these models, which differentiate by targeting specific use cases. Jasper, for example, has established itself as a leader by focusing on marketing and sales teams. A third competitive vector comes from established writing and productivity tools that have integrated generative AI capabilities, such as Grammarly with its GrammarlyGO feature.</p>`, color: { bg: '#F7FAFC', border: '#E2E8F0' } },
-        "AS":   { name: "Autonomous Sourcing",       fullDescription: `<h3>Market Sizing and Projections</h3><p>Autonomous Sourcing is a highly specialized and emerging segment within the broader procurement software market. As such, it does not yet have a widely reported, standalone market size. Its value is currently captured within the larger S2P and e-sourcing market, which was valued at approximately $8.03 billion in 2024.<sup class="citation-link" data-ref="87">87</sup></p><p>Despite the lack of a distinct market size, the growth potential for this category is exceptionally high. Industry analyses and initial vendor traction suggest a CAGR of over 20% for autonomous sourcing solutions. This hyper-growth is driven by the clear and compelling ROI for enterprises, which report significant efficiency gains and tangible cost savings through the automation of tactical and tail-spend procurement events.<sup class="citation-link" data-ref="1">1</sup></p><h3>Expanded Competitive Landscape</h3><p>The Autonomous Sourcing market is currently defined by a small group of innovative, AI-native vendors who are pioneering the use of software “bots” to automate sourcing events with minimal human intervention. This represents a significant evolution from traditional e-sourcing tools. The core value proposition of these platforms is to augment or replace human buyers for specific types of sourcing activities. Vendors like Keelvar and Arkestro have developed AI-driven platforms that can autonomously identify suppliers, issue RFQs, analyze bids, and even recommend or execute awards based on predefined strategies.</p>`, color: { bg: '#EDF2F7', border: '#A0AEC0' } },
-        "BID":  { name: "Bidding Software",          fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Bidding Software, also known as e-sourcing software, is a mature but steadily growing segment of procurement technology. Market size estimates for 2023 were in the range of $1.8 billion to $3.5 billion. More recent data indicates the broader procurement software market, which includes these tools, was valued at $8.2 billion in 2024.<sup class="citation-link" data-ref="214">214</sup></p><p>The market is projected to continue its growth, with forecasts expecting it to reach approximately $17.5 billion by 2033, expanding at a CAGR of 8.38%.<sup class="citation-link" data-ref="214">214</sup> This growth is driven by the ongoing need for organizations to achieve greater efficiency, transparency, and auditability in their competitive bidding processes.</p><h3>Expanded Competitive Landscape</h3><p>The Bidding Software market is largely dominated by modules within comprehensive Source-to-Pay (S2P) suites offered by major procurement technology vendors. The primary competitive advantage for vendors in this space is the seamless integration of their bidding tools with the rest of the procurement lifecycle. Market leaders like SAP Ariba, Coupa, and Jaggaer offer e-sourcing modules that are tightly integrated with their contract management, supplier management, and procure-to-pay functionalities. In addition to the large suite providers, the market also includes specialized e-sourcing vendors who differentiate through ease of use, specific functional strengths, or a focus on particular market segments like the public sector.</p>`, color: { bg: '#FAF9F6', border: '#E5E7EB' } },
-        "SRM":  { name: "Supplier Risk Mgmt",        fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Supplier and Third-Party Risk Management software is experiencing significant growth. In the mid-2020s, the market was valued between $7 billion and $10.7 billion. The market is on a strong upward trajectory, with forecasts projecting it will reach $18 billion to $25 billion by 2030. This expansion is supported by a robust CAGR of approximately 15%.</p><p>The key drivers behind this growth are twofold. First, a wave of new regulations concerning data privacy (GDPR, CCPA), anti-corruption, and Environmental, Social, and Governance (ESG) standards. Second, recent high-profile global supply chain disruptions have underscored the critical need for enhanced visibility into supplier risk.</p><h3>Expanded Competitive Landscape</h3><p>The Supplier Risk Management market includes a diverse set of vendors, from specialized third-party risk management (TPRM) providers to modules within larger Governance, Risk, and Compliance (GRC) and procurement suites. Specialized vendors like Aravo and NAVEX Global have established strong positions by offering deep functionality for supplier onboarding, due diligence, risk scoring, and ongoing monitoring. A significant trend is the convergence of risk management with broader enterprise platforms. GRC providers like Riskonnect offer supplier risk modules as part of a larger enterprise risk management framework.</p>`, color: { bg: '#F5F5F5', border: '#D4D4D4' } },
-        "RFPW": { name: "RFP Writing Software",        fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for RFP Writing Software, also known as proposal management software, is a well-defined niche within the broader sales and marketing technology landscape. The market was valued at approximately $2.33 billion in 2022. This segment is projected to experience strong and steady growth, with forecasts indicating it will reach $5.81 billion by 2030, expanding at a healthy CAGR of 12.2%.</p><p>The primary driver for this growth is the increasing need for sales, proposal, and bid teams to improve the efficiency and quality of their responses to Requests for Proposals (RFPs). As the volume and complexity of these documents grow, organizations are investing in specialized software to automate the response process.</p><h3>Expanded Competitive Landscape</h3><p>The RFP Writing Software market is led by several specialized vendors who have developed platforms to address the unique challenges of proposal management. The core functionality of these platforms revolves around a centralized content library or “answer library,” collaboration workflows, and project management tools. Market leaders like RFPIO and Loopio have built robust platforms that use AI and machine learning to intelligently search and recommend the best answers from a centralized content library, significantly speeding up the response process. Integration with CRM systems like Salesforce is another critical competitive factor.</p>`, color: { bg: '#FEFCE8', border: '#FEF08A' } },
-        "CPQ":  { name: "Configure Price Quote (CPQ)", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Configure, Price, Quote (CPQ) software is a key segment of the sales technology stack, experiencing strong and sustained growth. The market was valued at approximately $2.4 billion in 2024. Another estimate places the 2024 market size slightly lower at $2.15 billion.<sup class="citation-link" data-ref="222">222</sup></p><p>The market is projected to grow significantly, with forecasts indicating it will reach between $6.5 billion and $20.15 billion by the early 2030s. The CAGR is projected to be between 12-14% on the conservative end and as high as 37.7% on the aggressive end. This robust growth is driven by the increasing need for B2B sales organizations to automate complex quoting processes and reduce errors.</p><h3>Expanded Competitive Landscape</h3><p>The most significant competitive dynamic is the deep alignment with the CRM ecosystem. Salesforce CPQ (formerly SteelBrick) is a market leader due to its native integration with the Salesforce platform. Competition also comes from the major ERP vendors, who offer CPQ as part of their broader customer experience and commerce portfolios. Oracle CPQ (formerly BigMachines) and SAP CPQ are strong contenders, particularly in manufacturing and industrial sectors where product configurations are highly complex.</p>`, color: { bg: '#FDF2F8', border: '#FBCFE8' } },
-        "EXP":  { name: "Expense Management",        fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Expense Management Software, which automates the processes for managing employee-initiated travel and entertainment (T&E) spend, is a large and well-established market. In 2024, the market was valued at approximately $7.64 billion. A separate analysis focusing on the broader Travel and Expense Management software market places the 2024 valuation at $3.60 billion.<sup class="citation-link" data-ref="226">226</sup></p><p>The market is poised for continued healthy growth, with projections indicating it will more than double to reach between $9.78 billion and $16.48 billion by 2032. This growth is supported by a strong CAGR in the 10% to 13% range. Key drivers include the ongoing digitization of manual, paper-based expense reporting processes and the rebound in corporate travel.</p><h3>Expanded Competitive Landscape</h3><p>SAP Concur has long been the dominant player in the enterprise space, offering a comprehensive suite for travel booking, expense reporting, and invoice management. A different competitive dynamic exists in the SMB and mid-market segments, where ease of use and mobile-first functionality are paramount. Expensify has captured a significant share of this market with its user-friendly app. A major disruptive force in the market is the rise of integrated travel and spend management platforms. Companies like Navan (formerly TripActions) and Ramp are differentiating by combining a modern travel booking experience with integrated corporate cards and expense management.</p>`, color: { bg: '#E5E5E5', border: '#A3A3A3' } },
-        "FMS":  { name: "Freelancer Management",     fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Freelancer Management Platforms (FMS) is a rapidly expanding segment, driven by the growth of the gig economy. The market was valued between $4.5 billion and $6.0 billion in 2023-2024. The growth forecast for this market is exceptionally strong, with projections indicating it will reach between $15 billion and $21 billion by 2032-2033. This represents a robust CAGR of approximately 14.5%.</p><p>This growth is fueled by the need for organizations to efficiently source, onboard, manage, and pay their freelance talent while ensuring compliance with worker classification regulations.</p><h3>Expanded Competitive Landscape</h3><p>One major competitive segment is comprised of the large, established freelance marketplaces like Upwork and Fiverr. These platforms have leveraged their vast networks of freelance talent to build enterprise offerings that combine their marketplace with FMS functionalities. Another competitive segment consists of pure-play FMS providers, such as WorkMarket (an ADP company) and Talenthub. These platforms focus on providing the core software for companies to manage their own curated, private talent pools of freelancers. The market is also seeing a convergence with VMS platforms, as both categories deal with the management of the extended workforce.</p>`, color: { bg: '#FAFAF9', border: '#E7E5E4' } },
+        "CLM":  { name: "Contract Mgmt", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global Contract Lifecycle Management (CLM) software market is a robust and consistently growing segment of enterprise technology. Recent market analysis places its value at approximately $2.83 billion in 2024.<sup class="citation-link" data-ref="12">12</sup> Other credible estimates range from $1.1 billion to $1.26 billion for the same year, with variations likely attributable to the inclusion of associated implementation and managed services.<sup class="citation-link" data-ref="18">18</sup></p><p>The forecast for the CLM market remains strong, with projections indicating it will more than double to $5.65 billion by 2030.<sup class="citation-link" data-ref="12">12</sup> This growth trajectory is supported by a consensus CAGR in the 12% to 13% range.<sup class="citation-link" data-ref="12">12</sup></p><h3>Expanded Competitive Landscape</h3><p>The CLM market features a mix of established leaders, well-funded challengers, and innovative niche players. The competitive environment is characterized by a push toward AI-driven contract intelligence and deep integration with core enterprise systems like ERP and CRM. One path is led by comprehensive, AI-driven “Contract Intelligence” platforms that target large, global enterprises with complex needs (e.g., Icertis, Sirion). The second path consists of more accessible, workflow-centric solutions that often target the mid-market or specific departmental use cases (e.g., PandaDoc, Outlaw).<sup class="citation-link" data-ref="20">20</sup></p>`, color: { bg: '#EBF5FF', border: '#90CDF4' } },
+        "ERP":  { name: "Enterprise Resource", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global Enterprise Resource Planning (ERP) software market represents one of the largest and most mature segments in enterprise technology. Market valuations for 2024 range from $64.83 billion to $81.15 billion.<sup class="citation-link" data-ref="14">14</sup></p><p>Despite its maturity, the ERP market is projected to continue its strong growth trajectory. Forecasts for the early 2030s predict the market will reach between $123.41 billion and $229.79 billion.<sup class="citation-link" data-ref="14">14</sup> This expansion is supported by a robust CAGR ranging from 10.67% to 14.4%.<sup class="citation-link" data-ref="13">13</sup> The primary catalyst for this sustained growth is the widespread, ongoing migration of organizations from legacy on-premise ERP systems to modern, cloud-based SaaS suites.<sup class="citation-link" data-ref="1">1</sup></p><h3>Expanded Competitive Landscape</h3><p>The ERP market is dominated by a handful of large, established vendors. A significant shift has occurred where the primary battleground is now the intelligence layer and the extensibility of the platform. Leading vendors like SAP and Oracle are aggressively marketing their AI capabilities and the power of their underlying in-memory databases (SAP HANA, Oracle Autonomous Database) to deliver real-time analytics and intelligent automation.<sup class="citation-link" data-ref="59">59</sup></p>`, color: { bg: '#E6FFFA', border: '#81E6D9' } },
+        "S2P":  { name: "Source-to-Pay", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global Source-to-Pay (S2P) software market was valued at approximately $8.03 billion in 2024.<sup class="citation-link" data-ref="87">87</sup> The market is projected to more than double in the coming years, with forecasts expecting it to reach $18.28 billion by 2032.<sup class="citation-link" data-ref="87">87</sup> This growth is supported by a strong and steady CAGR of approximately 10.8%.<sup class="citation-link" data-ref="87">87</sup> The primary drivers for this expansion include the persistent need for cost reduction and demand for greater visibility over enterprise spend.</p><h3>Expanded Competitive Landscape</h3><p>A central theme in the competitive environment is the concept of a unified platform. Vendors like Coupa, SAP Ariba, and GEP emphasize the value of having a single, integrated suite to manage all aspects of business spend. Another key competitive vector is the application of AI and machine learning. Leading platforms are embedding intelligence to provide prescriptive recommendations, detect fraudulent spend, and benchmark performance against community data.<sup class="citation-link" data-ref="90">90</sup></p>`, color: { bg: '#F0FFF4', border: '#9AE6B4' } },
+        "ORCH": { name: "Procure Orchestration", fullDescription: `<h3>Market Sizing and Projections</h3><p>Procurement Orchestration is an emerging and rapidly growing software category. The global Process Orchestration market, its foundation, was valued at $7.32 billion in 2024 and is projected to expand at a significant CAGR of 21.1%. Forecasts for Procurement Orchestration specifically project a CAGR of 21.4% between 2024 and 2029. A synthesized estimate places the current global market in the range of $300 million to $500 million for 2024.</p><h3>Expanded Competitive Landscape</h3><p>The market is led by venture-backed innovators who pioneered the category. These platforms function as an intelligent “front door” or workflow layer on top of existing ERP and procurement systems. The emergence of this market is a direct consequence of "integration debt" created by the widespread adoption of best-of-breed SaaS tools. Vendors like Zip and ORO Labs position their solutions as an intelligent orchestration layer that provides a single, intuitive interface for employees to initiate any purchase request.<sup class="citation-link" data-ref="115">115</sup></p>`, color: { bg: '#FFF5F5', border: '#FC8181' } },
+        "HRIS": { name: "HRIS & WFM", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Human Capital Management (HCM) software, which encompasses HRIS and WFM platforms, is a large and steadily growing sector. In 2024, the market was valued at approximately $17.79 billion for Workforce Management software alone.<sup class="citation-link" data-ref="137">137</sup> The broader HCM market is significantly larger, estimated between $34 billion to $43 billion.</p><p>The WFM segment is forecast to reach $85.78 billion by 2033 (a CAGR of 19.1%).<sup class="citation-link" data-ref="137">137</sup> The overall HCM market is expected to grow at a CAGR of approximately 8% to 10%.</p><h3>Expanded Competitive Landscape</h3><p>The market is defined by the “all-in-one” platform concept. Vendors like Workday have set the standard for a seamless user experience. This approach contrasts with legacy ERP providers like SAP and Oracle, who have transitioned their on-premise HR functionalities to the cloud.<sup class="citation-link" data-ref="138">138</sup></p>`, color: { bg: '#FAF5FF', border: '#D6BCFA' } },
+        "VMS":  { name: "Vendor Mgmt", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Vendor Management Systems (VMS), focused on managing contingent workforce, was valued at approximately $8.02 billion in 2024.<sup class="citation-link" data-ref="158">158</sup></p><p>The market is expected to reach $20.41 billion by 2033, expanding at a healthy CAGR of 10.9%.<sup class="citation-link" data-ref="158">158</sup> This growth is driven by the rise of the gig economy and the need for robust compliance.</p><h3>Expanded Competitive Landscape</h3><p>A key differentiator is the platform's ability to manage the entire lifecycle of the extended workforce. Leading vendors like SAP Fieldglass and Beeline offer comprehensive, end-to-end solutions.<sup class="citation-link" data-ref="159">159</sup> Another trend is the integration of VMS with broader HCM and procurement ecosystems, as seen with Workday and Coupa.<sup class="citation-link" data-ref="161">161</sup></p>`, color: { bg: '#F0F9FF', border: '#A3BFFA' } },
+        "SIG":  { name: "Signature Mgmt", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Signature Management Platforms (e-signature) was significantly accelerated by the shift to remote work. In 2024, the market is valued between $5.2 billion and $9.8 billion.</p><p>The forecast remains exceptionally strong, with a projected CAGR in the 25% to 40% range, expected to propel the market to over $38 billion by 2030.</p><h3>Expanded Competitive Landscape</h3><p>The primary dynamic is the evolution from a point solution to a comprehensive agreement management platform. DocuSign, the market leader with a 61% share, is pursuing this strategy by expanding into CLM.<sup class="citation-link" data-ref="26">26</sup> Competition also comes from large vendors like Adobe Sign, leveraging its integration with Adobe Document Cloud.</p>`, color: { bg: '#FEFBF6', border: '#FEEBC8' } },
+        "RFPW": { name: "RFP Writing", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for RFP Writing Software (proposal management) was valued at approximately $2.33 billion in 2022. The segment is projected to reach $5.81 billion by 2030, expanding at a CAGR of 12.2%.</p><p>Growth is driven by the need for sales and bid teams to improve the efficiency and quality of their responses to RFPs, RFIs, and security questionnaires.</p><h3>Expanded Competitive Landscape</h3><p>The market is led by specialized vendors whose core functionality revolves around a centralized content or “answer library.” Market leaders like RFPIO and Loopio use AI to intelligently search and recommend the best answers from this library. Integration with CRM systems like Salesforce is a critical competitive factor.</p>`, color: { bg: '#FEFCE8', border: '#FEF08A' } },
+        "CPQ":  { name: "Configure Price Quote", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Configure, Price, Quote (CPQ) software was valued at approximately $2.4 billion in 2024.<sup class="citation-link" data-ref="222">222</sup></p><p>The market is projected to grow significantly, reaching between $6.5 billion and $20.15 billion by the early 2030s, with a CAGR projected between 12-37%.</p><h3>Expanded Competitive Landscape</h3><p>The most significant competitive dynamic is deep alignment with the CRM ecosystem. Salesforce CPQ is a market leader due to its native integration with the Salesforce platform. Competition also comes from ERP vendors like Oracle CPQ and SAP CPQ, who are strong contenders in manufacturing sectors where product configurations are highly complex.</p>`, color: { bg: '#FDF2F8', border: '#FBCFE8' } },
+        "PO":   { name: "Purchase Order", fullDescription: `<h3>Market Sizing and Projections</h3><p>The market for Purchase Order (PO) Platforms is a substantial and growing segment. The broader procurement software market, which includes PO functionalities, was valued at $8.03 billion in 2024.<sup class="citation-link" data-ref="87">87</sup> A more specific analysis for Purchase Order Software places the 2024 market value at $7.61 billion.<sup class="citation-link" data-ref="192">192</sup></p><p>The PO software segment is expected to grow at a CAGR of 15%, reaching $17.6 billion by 2031.<sup class="citation-link" data-ref="192">192</sup></p><h3>Expanded Competitive Landscape</h3><p>A distinct market for standalone PO software thrives by catering to organizations that find full S2P suites too complex or expensive. Companies like Precoro and Procurify offer user-friendly, intuitive platforms. Their key differentiators are ease of use, rapid deployment, and seamless integrations with accounting software like QuickBooks and Xero.</p>`, color: { bg: '#FFF5F7', border: '#FED7E2' } },
+        "AIW":  { name: "AI Writing", fullDescription: `<h3>Market Sizing and Projections</h3><p>The market for AI Writing Platforms has experienced explosive growth. In 2024, the market size is estimated between $421.41 million and $65.12 billion,<sup class="citation-link" data-ref="16">16</sup> with the wide range highlighting variance in market definitions.</p><p>The growth forecast is exceptionally high, with a CAGR ranging from 17.3% to 36.65%.<sup class="citation-link" data-ref="17">17</sup></p><h3>Expanded Competitive Landscape</h3><p>Competition comes from foundational model providers (OpenAI), specialized applications (Jasper for marketers), and integrated features within established tools (GrammarlyGO).</p>`, color: { bg: '#F7FAFC', border: '#E2E8F0' } },
+        "AS":   { name: "Autonomous Sourcing", fullDescription: `<h3>Market Sizing and Projections</h3><p>Autonomous Sourcing is a highly specialized and emerging segment. Its value is currently captured within the larger S2P and e-sourcing market ($8.03 billion in 2024).<sup class="citation-link" data-ref="87">87</sup></p><p>Despite the lack of a distinct market size, the growth potential is exceptionally high, with a suggested CAGR of over 20%. This is driven by clear ROI from efficiency gains and cost savings.<sup class="citation-link" data-ref="1">1</sup></p><h3>Expanded Competitive Landscape</h3><p>The market is defined by innovative, AI-native vendors pioneering the use of software “bots” to automate sourcing events. Vendors like Keelvar and Arkestro have developed AI-driven platforms that can autonomously identify suppliers, issue RFQs, analyze bids, and recommend awards.</p>`, color: { bg: '#EDF2F7', border: '#A0AEC0' } },
+        "BID":  { name: "Bidding Software", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Bidding Software (e-sourcing) is mature but steadily growing. Market size estimates were ~$3.5 billion in 2023, with the broader market valued at $8.2 billion in 2024.<sup class="citation-link" data-ref="214">214</sup></p><p>The market is projected to reach approximately $17.5 billion by 2033, at a CAGR of 8.38%.<sup class="citation-link" data-ref="214">214</sup></p><h3>Expanded Competitive Landscape</h3><p>The market is largely dominated by modules within comprehensive S2P suites (SAP Ariba, Coupa, Jaggaer). Their primary advantage is seamless integration with the rest of the procurement lifecycle. Specialized vendors differentiate through ease of use or a focus on particular market segments.</p>`, color: { bg: '#FAF9F6', border: '#E5E7EB' } },
+        "SRM":  { name: "Supplier Risk", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Supplier and Third-Party Risk Management software was valued between $7 billion and $10.7 billion in the mid-2020s. It is on a strong upward trajectory, projected to reach $18 billion to $25 billion by 2030, with a robust CAGR of approximately 15%.</p><h3>Expanded Competitive Landscape</h3><p>The market includes specialized TPRM providers (Aravo, NAVEX Global), modules within larger GRC platforms (Riskonnect), and converged privacy platforms (OneTrust). The trend is toward a holistic and continuous approach to risk monitoring, driven by new regulations and supply chain disruptions.</p>`, color: { bg: '#F5F5F5', border: '#D4D4D4' } },
+        "EXP":  { name: "Expense Mgmt", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Expense Management Software was valued at approximately $7.64 billion in 2024. The broader Travel and Expense Management market was valued at $3.60 billion.<sup class="citation-link" data-ref="226">226</sup></p><p>The market is poised for healthy growth, projected to reach between $9.78 billion and $16.48 billion by 2032, with a CAGR in the 10% to 13% range.</p><h3>Expanded Competitive Landscape</h3><p>SAP Concur is the dominant player in the enterprise space. Expensify has captured the SMB market with its user-friendly app. A major disruptive force is the rise of integrated platforms combining travel, corporate cards, and expenses, such as Navan and Ramp.</p>`, color: { bg: '#E5E5E5', border: '#A3A3A3' } },
+        "FMS":  { name: "Freelancer Mgmt", fullDescription: `<h3>Market Sizing and Projections</h3><p>The global market for Freelancer Management Platforms (FMS) was valued between $4.5 billion and $6.0 billion in 2023-2024. The forecast is strong, with projections to reach between $15 billion and $21 billion by 2032-2033, a robust CAGR of approximately 14.5%.</p><h3>Expanded Competitive Landscape</h3><p>The market includes large, established freelance marketplaces with enterprise offerings (Upwork, Fiverr) and pure-play FMS providers focused on managing private talent pools (WorkMarket, Talenthub). The line is blurring between FMS and VMS platforms as vendors expand their capabilities to offer a more holistic "total talent management" solution.</p>`, color: { bg: '#FAFAF9', border: '#E7E5E4' } },
     };
 
     const referencesData = [
-        { id: 1, text: "Periodic table - market.xlsx", url: "#" },
-        { id: 2, text: "About Icertis | Icertis", url: "https://www.icertis.com/company/" },
-        { id: 12, text: "Contract Management Software Market Size Report, 2030 - Grand View Research", url: "https://www.grandviewresearch.com/industry-analysis/contract-management-software-market-report" },
-        { id: 13, text: "Forbes - ERP Leveled Up In 2024", url: "https://www.forbes.com/sites/moorinsights/2025/02/11/erp-leveled-up-in-2024---where-is-it-headed-in-2025/" },
-        { id: 14, text: "Enterprise Resource Planning [ERP] Software Market Size, 2032 - Fortune Business Insights", url: "https://www.fortunebusinessinsights.com/enterprise-resource-planning-erp-software-market-102498" },
-        { id: 16, text: "AI Writing Assistant Software Market Size, Share, Trends & Forecast - Verified Market Research", url: "https://www.verifiedmarketresearch.com/product/ai-writing-assistant-software-market/" },
-        { id: 17, text: "AI Writing Assistant Software Market Size, Share | MRFR", url: "https://www.marketresearchfuture.com/reports/ai-writing-assistant-software-market-31158" },
-        { id: 18, text: "Contract Management Software Market Size, Share & Forecast - Verified Market Research", url: "https://www.verifiedmarketresearch.com/product/contract-management-software-market/" },
-        { id: 20, text: "PandaDoc Mission & Values", url: "https://www.pandadoc.com/about/" },
-        { id: 26, text: "Docusign - Wikipedia", url: "https://en.wikipedia.org/wiki/Docusign" },
-        { id: 59, text: "Oracle Enterprise Resource Planning (ERP)", url: "https://www.oracle.com/erp/" },
-        { id: 87, text: "Procurement Software Market Size, Trends | Global Report, 2032 - Fortune Business Insights", url: "https://www.fortunebusinessinsights.com/procurement-software-market-107099" },
-        { id: 88, text: "Source-to-Pay (S2P) Outsourcing Market Size, Share & Trends Analysis 2033", url: "https://www.marketresearchintellect.com/product/global-source-to-pay-s2p-outsourcing-market-size-and-forecast/" },
-        { id: 90, text: "Vendors in Source-to-Pay (S2P) - Spend Matters", url: "https://spendmatters.com/vendor-directory/category/source-to-pay/" },
-        { id: 91, text: "Coupa - Wikipedia", url: "https://en.wikipedia.org/wiki/Coupa" },
-        { id: 115, text: "Zip for Procurement | Zip", url: "https://ziphq.com/solutions/procurement" },
-        { id: 137, text: "Workforce Management Software Market Size & Trends [2033] - Global Growth Insights", url: "https://www.globalgrowthinsights.com/market-reports/workforce-management-software-market-108181" },
-        { id: 138, text: "SAP SuccessFactors: Human Capital Management Software", url: "https://www.sap.com/products/hcm.html" },
-        { id: 158, text: "Vendor Management Software Market Size, Share, Growth, 2033 - Business Research Insights", url: "https://www.businessresearchinsights.com/market-reports/vendor-management-software-market-113779" },
-        { id: 159, text: "What is Fieldglass? | SAP Fieldglass Solutions", url: "https://www.sap.com/products/acquired-brands/what-is-fieldglass.html" },
-        { id: 161, text: "What is a Vendor Management System (VMS)? | Workday US", url: "https://www.workday.com/en-us/topics/hr/vendor-management-system.html" },
-        { id: 192, text: "Global Purchase Order Software Market Size, Share and Forecast", url: "https://www.openpr.com/news/3766834/global-purchase-order-software-market-size-share-and-forecast" },
-        { id: 214, text: "Procurement Software Market Share, Size, Growth and Forecast 2033", url: "https://www.precedenceresearch.com/procurement-software-market" },
-        { id: 222, text: "Configure, Price and Quote (CPQ) Software Market - ReAnIn", url: "https://www.reanin.com/reports/global-configure-price-and-quote-cpq-software-market" },
-        { id: 226, text: "Travel and Expense Management Software Market Growth, 2032 - Fortune Business Insights", url: "https://www.fortunebusinessinsights.com/travel-and-expense-management-software-market-107118" }
+        { id: 1, text: "Periodic table - market.xlsx", url: "#" }, { id: 2, text: "About Icertis | Icertis", url: "https://www.icertis.com/company/" }, { id: 12, text: "Contract Management Software Market Size Report, 2030 - Grand View Research", url: "https://www.grandviewresearch.com/industry-analysis/contract-management-software-market-report" }, { id: 13, text: "Forbes - ERP Leveled Up In 2024", url: "https://www.forbes.com/sites/moorinsights/2025/02/11/erp-leveled-up-in-2024---where-is-it-headed-in-2025/" }, { id: 14, text: "Enterprise Resource Planning [ERP] Software Market Size, 2032 - Fortune Business Insights", url: "https://www.fortunebusinessinsights.com/enterprise-resource-planning-erp-software-market-102498" }, { id: 16, text: "AI Writing Assistant Software Market Size, Share, Trends & Forecast - Verified Market Research", url: "https://www.verifiedmarketresearch.com/product/ai-writing-assistant-software-market/" }, { id: 17, text: "AI Writing Assistant Software Market Size, Share | MRFR", url: "https://www.marketresearchfuture.com/reports/ai-writing-assistant-software-market-31158" }, { id: 18, text: "Contract Management Software Market Size, Share & Forecast - Verified Market Research", url: "https://www.verifiedmarketresearch.com/product/contract-management-software-market/" }, { id: 20, text: "PandaDoc Mission & Values", url: "https://www.pandadoc.com/about/" }, { id: 26, text: "Docusign - Wikipedia", url: "https://en.wikipedia.org/wiki/Docusign" }, { id: 59, text: "Oracle Enterprise Resource Planning (ERP)", url: "https://www.oracle.com/erp/" }, { id: 87, text: "Procurement Software Market Size, Trends | Global Report, 2032 - Fortune Business Insights", url: "https://www.fortunebusinessinsights.com/procurement-software-market-107099" }, { id: 88, text: "Source-to-Pay (S2P) Outsourcing Market Size, Share & Trends Analysis 2033", url: "https://www.marketresearchintellect.com/product/global-source-to-pay-s2p-outsourcing-market-size-and-forecast/" }, { id: 90, text: "Vendors in Source-to-Pay (S2P) - Spend Matters", url: "https://spendmatters.com/vendor-directory/category/source-to-pay/" }, { id: 91, text: "Coupa - Wikipedia", url: "https://en.wikipedia.org/wiki/Coupa" }, { id: 115, text: "Zip for Procurement | Zip", url: "https://ziphq.com/solutions/procurement" }, { id: 137, text: "Workforce Management Software Market Size & Trends [2033] - Global Growth Insights", url: "https://www.globalgrowthinsights.com/market-reports/workforce-management-software-market-108181" }, { id: 138, text: "SAP SuccessFactors: Human Capital Management Software", url: "https://www.sap.com/products/hcm.html" }, { id: 158, text: "Vendor Management Software Market Size, Share, Growth, 2033 - Business Research Insights", url: "https://www.businessresearchinsights.com/market-reports/vendor-management-software-market-113779" }, { id: 159, text: "What is Fieldglass? | SAP Fieldglass Solutions", url: "https://www.sap.com/products/acquired-brands/what-is-fieldglass.html" }, { id: 161, text: "What is a Vendor Management System (VMS)? | Workday US", url: "https://www.workday.com/en-us/topics/hr/vendor-management-system.html" }, { id: 192, text: "Global Purchase Order Software Market Size, Share and Forecast", url: "https://www.openpr.com/news/3766834/global-purchase-order-software-market-size-share-and-forecast" }, { id: 214, text: "Procurement Software Market Share, Size, Growth and Forecast 2033", url: "https://www.precedenceresearch.com/procurement-software-market" }, { id: 222, text: "Configure, Price and Quote (CPQ) Software Market - ReAnIn", url: "https://www.reanin.com/reports/global-configure-price-and-quote-cpq-software-market" }, { id: 226, text: "Travel and Expense Management Software Market Growth, 2032 - Fortune Business Insights", url: "https://www.fortunebusinessinsights.com/travel-and-expense-management-software-market-107118" }
     ];
 
     const heavyElementIds = new Set([101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116]);
     
     const elementPositions = {
-        // Column 1 (CLM)
+        // Based on user's image (column-major order)
         1: { row: 1, col: 1 }, 2: { row: 2, col: 1 }, 3: { row: 3, col: 1 }, 4: { row: 4, col: 1 }, 5: { row: 5, col: 1 },
-        // Column 2 (CLM)
         6: { row: 1, col: 2 }, 7: { row: 2, col: 2 }, 8: { row: 3, col: 2 },
-        // Column 3 (ERP)
         9: { row: 1, col: 3 }, 10: { row: 2, col: 3 }, 11: { row: 3, col: 3 }, 12: { row: 4, col: 3 }, 13: { row: 5, col: 3 },
-        // Column 4 (ERP)
         14: { row: 1, col: 4 }, 15: { row: 2, col: 4 }, 16: { row: 3, col: 4 },
-        // Column 5 (S2P, ORCH)
         17: { row: 1, col: 5 }, 18: { row: 2, col: 5 }, 19: { row: 3, col: 5 }, 20: { row: 4, col: 5 }, 21: { row: 5, col: 5 },
-        23: { row: 1, col: 6 }, 24: { row: 2, col: 6 }, 25: { row: 3, col: 6 }, 26: { row: 4, col: 6 }, 22: { row: 1, col: 7 }, 27: { row: 2, col: 7 }, 28: { row: 3, col: 7 },
-        // Column 6 (HRIS, VMS)
+        22: { row: 1, col: 6 }, 23: { row: 2, col: 6 }, 24: { row: 3, col: 6 }, 25: { row: 4, col: 6 }, 26: { row: 5, col: 6 },
+        27: { row: 1, col: 7 }, 28: { row: 2, col: 7 },
         29: { row: 1, col: 8 }, 30: { row: 2, col: 8 }, 31: { row: 3, col: 8 }, 32: { row: 4, col: 8 }, 33: { row: 5, col: 8 },
         34: { row: 1, col: 9 }, 35: { row: 2, col: 9 }, 36: { row: 3, col: 9 }, 37: { row: 4, col: 9 }, 38: { row: 5, col: 9 },
         39: { row: 1, col: 10 }, 40: { row: 2, col: 10 }, 41: { row: 3, col: 10 }, 42: { row: 4, col: 10 },
-        // Column 7 (SIG, RFPW, CPQ)
         43: { row: 1, col: 11 }, 44: { row: 2, col: 11 }, 45: { row: 3, col: 11 }, 46: { row: 4, col: 11 }, 47: { row: 5, col: 11 },
-        78: { row: 1, col: 12 }, 79: { row: 2, col: 12 }, 80: { row: 3, col: 12 }, 81: { row: 4, col: 12 }, 82: { row: 5, col: 12 },
-        83: { row: 1, col: 13 }, 84: { row: 2, col: 13 }, 85: { row: 3, col: 13 }, 86: { row: 4, col: 13 }, 87: { row: 5, col: 13 },
-        // Column 8 (PO, AIW, AS, BID, SRM, EXP, FMS)
-        49: { row: 1, col: 14 }, 50: { row: 2, col: 14 }, 56: { row: 3, col: 14 }, 62: { row: 4, col: 14 }, 72: { row: 5, col: 14 },
-        51: { row: 1, col: 15 }, 52: { row: 2, col: 15 }, 57: { row: 3, col: 15 }, 63: { row: 4, col: 15 }, 73: { row: 5, col: 15 },
-        53: { row: 1, col: 16 }, 54: { row: 2, col: 16 }, 58: { row: 3, col: 16 }, 64: { row: 4, col: 16 }, 74: { row: 5, col: 16 },
-        55: { row: 1, col: 17 }, 59: { row: 2, col: 17 }, 60: { row: 3, col: 17 }, 65: { row: 4, col: 17 }, 75: { row: 5, col: 17 },
-        66: { row: 1, col: 18 }, 67: { row: 2, col: 18 }, 61: { row: 3, col: 18 }, 76: { row: 4, col: 18 }, 77: { row: 5, col: 18 },
-        68: { row: 1, col: 19 }, 69: { row: 2, col: 19 }, 89: { row: 3, col: 19 }, 90: { row: 4, col: 19 }, 94: { row: 5, col: 19 },
-        70: { row: 1, col: 20 }, 71: { row: 2, col: 20 }, 91: { row: 3, col: 20 }, 92: { row: 4, col: 20 }, 95: { row: 5, col: 20 },
-        48: { row: 1, col: 21 }, 88: { row: 2, col: 21 }, 93: { row: 3, col: 21 }, 96: { row: 4, col: 21 }, 97: { row: 5, col: 21 },
-        98: { row: 1, col: 22 }, 99: { row: 2, col: 22 }
+        48: { row: 1, col: 12 },
+        78: { row: 1, col: 13 }, 79: { row: 2, col: 13 }, 80: { row: 3, col: 13 }, 81: { row: 4, col: 13 }, 82: { row: 5, col: 13 },
+        83: { row: 1, col: 14 }, 84: { row: 2, col: 14 }, 85: { row: 3, col: 14 }, 86: { row: 4, col: 14 }, 87: { row: 5, col: 14 },
+        88: { row: 1, col: 15 },
+        49: { row: 1, col: 16 }, 50: { row: 2, col: 16 }, 51: { row: 3, col: 16 }, 52: { row: 4, col: 16 }, 53: { row: 5, col: 16 },
+        54: { row: 1, col: 17 }, 55: { row: 2, col: 17 },
+        56: { row: 1, col: 18 }, 57: { row: 2, col: 18 }, 58: { row: 3, col: 18 }, 59: { row: 4, col: 18 }, 60: { row: 5, col: 18 },
+        61: { row: 6, col: 18 },
+        62: { row: 6, col: 5 }, 63: { row: 6, col: 6 }, 64: { row: 6, col: 7 }, 65: { row: 6, col: 8 },
+        66: { row: 7, col: 5 }, 67: { row: 7, col: 6 }, 68: { row: 7, col: 7 }, 69: { row: 7, col: 8 }, 70: { row: 7, col: 9 }, 71: { row: 7, col: 10 },
+        72: { row: 6, col: 9 }, 73: { row: 6, col: 10 }, 74: { row: 6, col: 11 }, 75: { row: 6, col: 12 }, 76: { row: 6, col: 13 }, 77: { row: 6, col: 14 },
+        89: { row: 7, col: 11 }, 90: { row: 7, col: 12 }, 91: { row: 7, col: 13 }, 92: { row: 7, col: 14 }, 93: { row: 7, col: 15 },
+        94: { row: 6, col: 15 }, 95: { row: 6, col: 16 }, 96: { row: 6, col: 17 }, 97: { row: 6, col: 18 },
+        98: { row: 7, col: 16 }, 99: { row: 7, col: 17 }
     };
     
-    const controlsContainer = document.getElementById('controls-container');
+    const legendContainer = document.getElementById('legend-container');
     const mainGrid = document.getElementById('main-grid');
     const heavyGrid = document.getElementById('heavy-elements-grid');
     const infoPanel = document.getElementById('information-panel');
@@ -417,36 +399,33 @@ h2 { font-size: 1.5rem; margin-top: 2rem; }
     let activeMarketCategory = null;
     let selectedCompanyId = null;
 
-    function renderControls() {
+    function renderLegend() {
         const marketOrder = ["CLM", "ERP", "S2P", "ORCH", "HRIS", "VMS", "SIG", "RFPW", "CPQ", "PO", "AIW", "AS", "BID", "SRM", "EXP", "FMS"];
-        controlsContainer.innerHTML = `<label>Filter by Market Category (Order: Top-to-Bottom, Left-to-Right):</label><div class="filter-buttons"></div>`;
-        const filterButtonsContainer = controlsContainer.querySelector('.filter-buttons');
+        legendContainer.innerHTML = `<ul class="legend-list"></ul>`;
+        const legendList = legendContainer.querySelector('.legend-list');
         
         marketOrder.forEach(key => {
             const market = marketCategories[key];
-            const group = document.createElement('div');
-            group.className = 'filter-button-group';
-            if (activeMarketCategory === key) group.classList.add('active');
+            const li = document.createElement('li');
+            li.className = 'legend-item';
+            if (activeMarketCategory === key) li.classList.add('active');
             
-            const nameBtn = document.createElement('button');
-            nameBtn.className = 'market-name';
-            nameBtn.textContent = market.name;
-            nameBtn.addEventListener('click', () => {
+            li.innerHTML = `
+                <div class="legend-color-box" style="background-color: ${market.color.bg}; border: 1px solid ${market.color.border};"></div>
+                <span class="legend-name">${market.name}</span>
+                <button class="legend-plus-btn" data-market-key="${key}">+</button>
+            `;
+
+            li.querySelector('.legend-name').addEventListener('click', () => {
                 activeMarketCategory = activeMarketCategory === key ? null : key;
                 render();
             });
-
-            const plusBtn = document.createElement('button');
-            plusBtn.className = 'market-plus';
-            plusBtn.textContent = '+';
-            plusBtn.addEventListener('click', (e) => {
+            li.querySelector('.legend-plus-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
-                showMarketModal(market);
+                showMarketModal(marketCategories[e.target.dataset.marketKey]);
             });
 
-            group.appendChild(nameBtn);
-            group.appendChild(plusBtn);
-            filterButtonsContainer.appendChild(group);
+            legendList.appendChild(li);
         });
     }
     
@@ -508,7 +487,7 @@ h2 { font-size: 1.5rem; margin-top: 2rem; }
                 </div>
             `;
         } else {
-            infoPanel.innerHTML = `<div class="info-placeholder"><h3>Select a company to view details</h3><p>Use the filter buttons to highlight markets and the '+' icon to learn more about a specific market.</p></div>`;
+            infoPanel.innerHTML = `<div class="info-placeholder"><h3>Select a company to view details</h3><p>Use the legend to highlight markets and the '+' icon to learn more about a specific market.</p></div>`;
         }
     }
 
@@ -527,7 +506,6 @@ h2 { font-size: 1.5rem; margin-top: 2rem; }
                 e.preventDefault();
                 const refId = e.target.getAttribute('data-ref');
                 closeModal();
-                // A brief delay to allow the first modal to close before opening the second
                 setTimeout(() => showReferencesModal(refId), 300);
             });
         });
@@ -556,23 +534,15 @@ h2 { font-size: 1.5rem; margin-top: 2rem; }
         }
     }
     
-    function closeModal() {
-        modalBackdrop.classList.remove('visible');
-    };
-
-    function render() {
-        renderControls();
-        renderGrids();
-    }
+    function closeModal() { modalBackdrop.classList.remove('visible'); }
+    function render() { renderLegend(); renderGrids(); }
     
     referencesBadge.addEventListener('click', () => showReferencesModal());
-    modalBackdrop.addEventListener('click', (e) => {
-        if (e.target === modalBackdrop) closeModal();
-    });
+    modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) closeModal(); });
 
     // Initial Render
     render();
-    renderInfoPanel(); // Render placeholder
+    renderInfoPanel();
 })();
 </script>
 </body>
